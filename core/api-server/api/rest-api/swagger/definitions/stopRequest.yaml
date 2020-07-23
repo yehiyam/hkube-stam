@@ -1,0 +1,10 @@
+type: object
+properties:
+  jobId:
+    $ref: "#/components/schemas/jobId"
+  reason:
+    type: string
+    default: requested by user
+    description: reason for stop pipeline
+required:
+  - jobId

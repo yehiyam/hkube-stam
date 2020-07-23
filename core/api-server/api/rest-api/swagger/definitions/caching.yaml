@@ -1,0 +1,12 @@
+type: object
+properties:
+  jobId:
+    $ref: "#/components/schemas/jobId"
+  nodeName:
+    type: string
+    description: Unique node identifier
+    minLength: 1
+additionalProperties: false
+required:
+  - jobId
+  - nodeName

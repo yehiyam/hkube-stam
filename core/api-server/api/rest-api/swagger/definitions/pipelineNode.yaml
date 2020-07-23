@@ -1,0 +1,45 @@
+type: object
+properties:
+  nodeName:
+    type: string
+    description: Unique node identifier
+    minLength: 1
+  algorithmName:
+    $ref: "#/components/schemas/algorithmName"
+  input:
+    type: array
+    description: The input for the algorithm
+    items: {}
+    default: []
+  ttl:
+    type: integer
+    description: Algorithm execution time to live in seconds. 0 to disable
+    minimum: 0
+    example: 0
+  includeInResult:
+    type: boolean
+  metrics:
+    $ref: "#/components/schemas/metrics"
+  retry:
+    type: object
+    properties:
+      policy:
+        type: string
+        default: OnCrash
+        enum:
+          - Never
+          - Always
+          - OnError
+          - OnCrash
+      limit:
+        type: integer
+        minimum: 1
+        default: 3
+        example: 1
+  batchOperation:
+    type: string
+    enum:
+      - indexed
+      - cartesian
+required:
+  - nodeName

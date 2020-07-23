@@ -1,0 +1,30 @@
+type: object
+properties:
+  name:
+    type: string
+    default: ""
+  experimentName:
+    $ref: "#/components/schemas/experimentName"
+    default: main
+  order:
+    type: string
+    default: mod
+    enum:
+      - key
+      - version
+      - create
+      - mod
+      - value
+  sort:
+    type: string
+    default: desc
+    enum:
+      - asc
+      - desc
+  limit:
+    type: integer
+    default: 1
+    minimum: 1
+    maximum: 1000
+required:
+  - name

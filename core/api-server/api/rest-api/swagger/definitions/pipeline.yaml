@@ -1,0 +1,39 @@
+type: object
+properties:
+  name:
+    $ref: "#/components/schemas/pipelineName"
+  experimentName:
+    $ref: "#/components/schemas/experimentName"
+  description:
+    type: string
+    description: pipeline description
+  nodes:
+    type: array
+    description: Array of nodes
+    items:
+      $ref: "#/components/schemas/pipelineNode"
+  flowInput:
+    type: object
+    description: input object
+  webhooks:
+    $ref: "#/components/schemas/webhooks"
+  options:
+    $ref: "#/components/schemas/options"
+    default: {}
+  priority:
+    $ref: "#/components/schemas/priority"
+    default: 3
+  triggers:
+    $ref: "#/components/schemas/triggers"
+  tags:
+    type: array
+    description: Array of tags
+    items:
+      $ref: "#/components/schemas/tag"
+  rootJobId:
+    type: string
+    description: the root job id of the current tree
+additionalProperties: false
+required:
+  - name
+  - nodes
