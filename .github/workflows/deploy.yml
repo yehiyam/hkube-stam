@@ -1,0 +1,15 @@
+name: Deployer
+
+on: [pull_request]
+
+jobs:
+  deploy_job:
+    runs-on: ubuntu-latest
+    name: build and deploy
+    steps:
+    - name: changed
+      id: changed
+      uses: yehiyam/deploy-to-k8s@master
+      with:
+        repo-token: "${{ secrets.GITHUB_TOKEN }}"
+   
