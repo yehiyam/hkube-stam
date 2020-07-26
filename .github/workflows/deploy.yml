@@ -86,15 +86,30 @@ jobs:
       with:
         name: values.yaml
         path: helm/hkube/values.yaml
+    # - name: update helm repo
+    #   uses: EndBug/add-and-commit@v4
+    #   with:
+    #     add: values.yaml
+    #     cwd: 'helm/hkube'
+    #     message: "update version [skip ci]"
+    #     ref: ${{ needs.deployment.outputs.branchName }}
+    #   env:
+    #     GITHUB_TOKEN: ${{ secrets.GH_TOKEN }}
     - name: update helm repo
-      uses: EndBug/add-and-commit@v4
+      run: |
+        cd helm/hkube
+        git config --local user.email "action@github.com"
+        git config --local user.name "GitHub Action"
+        git add values.yaml
+        git commit -m "update version [skip ci]"
+        git status
+    - name: push helm repo
+      uses: ad-m/github-push-action@master
       with:
-        add: values.yaml
-        cwd: 'helm/hkube'
-        message: "update version [skip ci]"
-        ref: ${{ needs.deployment.outputs.branchName }}
-      env:
-        GITHUB_TOKEN: ${{ secrets.GH_TOKEN }}
+        github_token: ${{ secrets.GH_TOKEN }}
+        branch: ${{ needs.deployment.outputs.branchName }}
+        directory: 'helm/hkube'
+        repository: yehiyam/helm
     # - name: update helm repo
     #   run: |
     #     cd helm/hkube
