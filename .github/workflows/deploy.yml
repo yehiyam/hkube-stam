@@ -7,6 +7,8 @@ jobs:
     runs-on: ubuntu-latest
     name: build and deploy
     steps:
+    - name: Checkout
+      uses: actions/checkout@v2
     - name: changed
       id: changed
       uses: yehiyam/deploy-to-k8s@master
