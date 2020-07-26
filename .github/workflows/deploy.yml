@@ -18,9 +18,21 @@ jobs:
     steps:
     - name: Checkout
       uses: actions/checkout@v2
+    - name: Checkout Helm
+      uses: actions/checkout@v2
+      with:
+        repository: kube-HPC/helm
+        path: helm
+        ref: ${{ github.head_ref || github.ref }}
+    - name: Docker login
+      run: echo ${{ secrets.DOCKER_PASSWORD }} | docker login -u ${{ secrets.DOCKER_USER }} --password-stdin
     - name: changed
       id: changed
       uses: yehiyam/deploy-to-k8s@master
       with:
         repo-token: "${{ secrets.GITHUB_TOKEN }}"
+    - uses: actions/upload-artifact@v2
+      with:
+        name: values.yaml
+        path: helm/hkube/values.yaml
    
