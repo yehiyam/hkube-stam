@@ -1,6 +1,12 @@
 name: Deployer
 
-on: [pull_request]
+on:
+  workflow_dispatch:
+    inputs:
+      prNumber:
+        description: 'The PR number to build'
+        required: true
+
 
 jobs:
   deploy_job:
@@ -14,4 +20,3 @@ jobs:
       uses: yehiyam/deploy-to-k8s@master
       with:
         repo-token: "${{ secrets.GITHUB_TOKEN }}"
-   
