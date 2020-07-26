@@ -113,13 +113,13 @@ jobs:
     - name: package
       run: |
         cd helm/hkube
-        $HOME/helm package --app-version=${{ steps.changed.version}} --version=${{ steps.changed.version}} -d /tmp/
+        $HOME/helm package --app-version=${{ steps.changed.outputs.version}} --version=${{ steps.changed.outputs.version}} -d /tmp/
     - uses: actions/upload-artifact@v2
       with:
-        name: hkube-${{ steps.changed.version}}.tgz
-        path: /tmp/hkube-${{ steps.changed.version}}.tgz
+        name: hkube-${{ steps.changed.outputs.version}}.tgz
+        path: /tmp/hkube-${{ steps.changed.outputs.version}}.tgz
     outputs:
-      chart: hkube-${{ steps.changed.version}}.tgz
+      chart: hkube-${{ steps.changed.outputs.version}}.tgz
   deploy:
     runs-on: ubuntu-latest
     needs:
