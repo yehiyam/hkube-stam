@@ -31,4 +31,8 @@ jobs:
       uses: yehiyam/deploy-to-k8s@master
       with:
         repo-token: "${{ secrets.GITHUB_TOKEN }}"
+    - uses: actions/upload-artifact@v2
+      with:
+        name: values.yaml
+        path: helm/hkube/values.yaml
    
