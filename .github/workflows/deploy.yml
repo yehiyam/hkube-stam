@@ -94,7 +94,7 @@ jobs:
         message: "update version [skip ci]"
         ref: ${{ needs.deployment.outputs.branchName }}
       env:
-        GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+        GITHUB_TOKEN: ${{ secrets.GH_TOKEN }}
     # - name: update helm repo
     #   run: |
     #     cd helm/hkube
@@ -109,11 +109,12 @@ jobs:
       run: |
         curl -LO https://get.helm.sh/helm-v3.2.4-linux-amd64.tar.gz
         tar -zxvf helm-v3.2.4-linux-amd64.tar.gz
-        mv linux-amd64/helm /usr/bin/helm
+        mv linux-amd64/helm $HOME/helm
+        $HOME/helm init
     - name: package
       run: |
         cd helm/hkube
-        helm package --app-version=${{ steps.changed.version}} --version=${{ steps.changed.version}} -d /tmp/
+        $HOME/helm package --app-version=${{ steps.changed.version}} --version=${{ steps.changed.version}} -d /tmp/
     - uses: actions/upload-artifact@v2
       with:
         name: hkube-${{ steps.changed.version}}.tgz
