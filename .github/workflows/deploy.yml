@@ -90,6 +90,8 @@ jobs:
         cd helm/hkube
         git config --local user.email "action@github.com"
         git config --local user.name "GitHub Action"
+        git status
+        git remote -v
         git add values.yaml
         git commit -m "update version [skip ci]"
         git push 
