@@ -1,6 +1,9 @@
 name: Deployer
 
 on:
+  pull_request:
+    branches:
+      - master
   workflow_dispatch:
     inputs:
       prNumber:
@@ -20,3 +23,4 @@ jobs:
       uses: yehiyam/deploy-to-k8s@master
       with:
         repo-token: "${{ secrets.GITHUB_TOKEN }}"
+   
