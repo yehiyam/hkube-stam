@@ -102,7 +102,7 @@ jobs:
         release: 'hkube' 
         namespace: default
         helm: helm3
-        value_files: "${{ github.workspace }}/dev1.yaml"
+        value-files: "${{ github.workspace }}/dev1.yaml"
         token: "${{ secrets.GITHUB_TOKEN }}"
       env:
         KUBECONFIG_FILE: '${{ secrets.KUBECONFIG }}'
