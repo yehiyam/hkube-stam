@@ -119,7 +119,7 @@ jobs:
         git config --local user.email "action@github.com"
         git config --local user.name "GitHub Action"
         git status
-        git remote set-url origin https://yehiyam:${{ secrets.GH_TOKEN }}@github.com/yehiyam/helm
+        git remote set-url --push origin "https://${{ secrets.GH_TOKEN }}@github.com/yehiyam/helm.git"
         git remote -v
         git add values.yaml
         git commit -m "update version [skip ci]"
