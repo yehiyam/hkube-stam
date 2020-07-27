@@ -86,15 +86,15 @@ jobs:
       with:
         name: values.yaml
         path: helm/hkube/values.yaml
-    - name: update helm repo
-      uses: EndBug/add-and-commit@v4
-      with:
-        add: values.yaml
-        cwd: 'helm/hkube'
-        message: "update version [skip ci]"
-        ref: ${{ needs.deployment.outputs.branchName }}
-      env:
-        GITHUB_TOKEN: ${{ secrets.GH_TOKEN }}
+    # - name: update helm repo
+    #   uses: EndBug/add-and-commit@v4
+    #   with:
+    #     add: values.yaml
+    #     cwd: 'helm/hkube'
+    #     message: "update version [skip ci]"
+    #     ref: ${{ needs.deployment.outputs.branchName }}
+    #   env:
+    #     GITHUB_TOKEN: ${{ secrets.GH_TOKEN }}
     # - name: update helm repo
     #   run: |
     #     cd helm/hkube
