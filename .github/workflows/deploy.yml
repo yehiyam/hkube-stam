@@ -74,6 +74,9 @@ jobs:
         repository: yehiyam/helm
         path: helm
         ref: ${{ needs.deployment.outputs.branchName }}
+    - name: move helm
+      run: |
+        mv helm $HOME/helm
     - name: Docker login
       run: echo ${{ secrets.DOCKER_PASSWORD }} | docker login -u ${{ secrets.DOCKER_USER }} --password-stdin
     - name: changed
@@ -85,7 +88,7 @@ jobs:
     - uses: actions/upload-artifact@v2
       with:
         name: values.yaml
-        path: helm/hkube/values.yaml
+        path: $HOME/helm/hkube/values.yaml
     # - name: update helm repo
     #   uses: EndBug/add-and-commit@v4
     #   with:
@@ -112,7 +115,7 @@ jobs:
     #     repository: yehiyam/helm
     - name: update helm repo
       run: |
-        cd helm/hkube
+        cd $HOME/helm/hkube
         git config --local user.email "action@github.com"
         git config --local user.name "GitHub Action"
         git status
@@ -125,11 +128,11 @@ jobs:
       run: |
         curl -LO https://get.helm.sh/helm-v3.2.4-linux-amd64.tar.gz
         tar -zxvf helm-v3.2.4-linux-amd64.tar.gz
-        mv linux-amd64/helm $HOME/helm
+        mv linux-amd64/helm $HOME/helm3
     - name: package
       run: |
-        cd helm/hkube
-        $HOME/helm package --app-version=${{ steps.changed.outputs.version}} --version=${{ steps.changed.outputs.version}} -d /tmp/
+        cd $HOME/helm/hkube
+        $HOME/helm3 package --app-version=${{ steps.changed.outputs.version}} --version=${{ steps.changed.outputs.version}} -d /tmp/
     - uses: actions/upload-artifact@v2
       with:
         name: hkube-${{ steps.changed.outputs.version}}.tgz
