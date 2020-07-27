@@ -55,8 +55,8 @@ jobs:
         git config --local user.email "action@github.com"
         git config --local user.name "GitHub Action"
         set +e
-        changed=$(git diff --exit-code --quiet)
-        if [ $changed == 1 ]; then
+        git diff --exit-code --quiet
+        if [ "$?" == 1 ]; then
           set -e
           git add values.yaml
           git commit -m "update version [skip ci]"
