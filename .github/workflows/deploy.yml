@@ -102,9 +102,5 @@ jobs:
         helm: helm3
         value_files: "${{ github.workspace }}/dev1.yaml"
         token: "${{ secrets.GITHUB_TOKEN }}"
-        value-files: >-
-          [
-            "${{ github.workspace }}/dev1.yaml", 
-          ]
       env:
         KUBECONFIG_FILE: '${{ secrets.KUBECONFIG }}'
