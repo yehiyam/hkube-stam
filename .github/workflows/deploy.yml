@@ -116,10 +116,11 @@ jobs:
         git config --local user.email "action@github.com"
         git config --local user.name "GitHub Action"
         git status
+        git remote set-url origin https://yehiyam:${{ secrets.GH_TOKEN }}@github.com/yehiyam/helm
         git remote -v
         git add values.yaml
         git commit -m "update version [skip ci]"
-        git push https://yehiyam:${{ secrets.GH_TOKEN }}@github.com/yehiyam/helm
+        git push 
     - name: get-helm
       run: |
         curl -LO https://get.helm.sh/helm-v3.2.4-linux-amd64.tar.gz
