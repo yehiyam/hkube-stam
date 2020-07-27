@@ -41,7 +41,9 @@ jobs:
         environment: dev
         auto_merge: false
       env:
-        GITHUB_TOKEN: "${{ secrets.GH_TOKEN }}"
+        # GITHUB_TOKEN: "${{ secrets.GH_TOKEN }}"
+        GITHUB_TOKEN: "foobar"
+
     # - name: set deployment status to in progress
     #   id: start_deployment
     #   uses: octokit/request-action@v2.x
