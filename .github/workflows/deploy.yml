@@ -91,7 +91,7 @@ jobs:
     - name: deploy
       uses: 'deliverybot/helm@v1'
       with:
-        chart: "${{ GITHUB_WORKSPACE }}/${{ needs.build_job.outputs.chart }}"
+        chart: "${{ github.workspace }}/${{ needs.build_job.outputs.chart }}"
         release: 'hkube' 
         namespace: default
         helm: helm3
