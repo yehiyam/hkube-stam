@@ -71,10 +71,11 @@ jobs:
       run: |
         cd $HOME/helm/hkube
         $HOME/helm3 package . --app-version=${{ steps.changed.outputs.version}} --version=${{ steps.changed.outputs.version}} -d /tmp/
+        mv /tmp/hkube-${{ steps.changed.outputs.version}}.tgz /tmp/chart.tgz
     - uses: actions/upload-artifact@v2
       with:
         name: chart.tgz
-        path: /tmp/hkube-${{ steps.changed.outputs.version}}.tgz
+        path: /tmp/chart.tgz
     outputs:
       chart: chart.tgz
   deploy:
