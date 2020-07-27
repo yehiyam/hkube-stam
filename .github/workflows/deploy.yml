@@ -68,15 +68,20 @@ jobs:
     steps:
     - name: Checkout
       uses: actions/checkout@v2
-    - name: Checkout Helm
-      uses: actions/checkout@v2
-      with:
-        repository: yehiyam/helm
-        path: helm
-        ref: ${{ needs.deployment.outputs.branchName }}
-    - name: move helm
+    # - name: Checkout Helm
+    #   uses: actions/checkout@v2
+    #   with:
+    #     repository: yehiyam/helm
+    #     path: helm
+    #     ref: ${{ needs.deployment.outputs.branchName }}
+    - name: Checkout helm
       run: |
-        mv helm $HOME/helm
+        git config --local user.email "action@github.com"
+        git config --local user.name "GitHub Action"
+        git clone "https://${{ secrets.GH_TOKEN }}@github.com/yehiyam/helm.git" "$HOME/helm"
+        cd $HOME/helm
+        git checkout ${{ needs.deployment.outputs.branchName }}
+        git status
     - name: Docker login
       run: echo ${{ secrets.DOCKER_PASSWORD }} | docker login -u ${{ secrets.DOCKER_USER }} --password-stdin
     - name: changed
@@ -116,10 +121,7 @@ jobs:
     - name: update helm repo
       run: |
         cd $HOME/helm/hkube
-        git config --local user.email "action@github.com"
-        git config --local user.name "GitHub Action"
         git status
-        git remote set-url --push origin "https://${{ secrets.GH_TOKEN }}@github.com/yehiyam/helm.git"
         git remote -v
         git add values.yaml
         git commit -m "update version [skip ci]"
