@@ -89,7 +89,9 @@ jobs:
       with:
         name: ${{ needs.build_job.outputs.chart }}
     - name: set values
-      run: 'echo "$DEV1_VALUES" > ${{ github.workspace }}/dev1.yaml'
+      run: |
+        echo "$DEV1_VALUES" > ${{ github.workspace }}/dev1.yaml
+        cat ${{ github.workspace }}/dev1.yaml
       shell: bash
       env:
         DEV1_VALUES: ${{secrets.DEV1_VALUES}}
