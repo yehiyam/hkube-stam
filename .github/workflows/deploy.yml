@@ -5,7 +5,7 @@ jobs:
   build_job:
     runs-on: ubuntu-latest
     name: build dockers
-    # if: ${{ github.payload.deployment.environment == 'dev' }}
+    if: ${{ github.payload.deployment.environment == 'dev' }}
     steps:
     - name: set deployment status to in progress
       id: start_deployment
@@ -77,20 +77,23 @@ jobs:
         path: /tmp/hkube-${{ steps.changed.outputs.version}}.tgz
     outputs:
       chart: hkube-${{ steps.changed.outputs.version}}.tgz
-  # deploy:
-  #   runs-on: ubuntu-latest
-  #   needs:
-  #     - deploy-check
-  #     - build_job
-  #   if: needs.deploy-check.outputs.triggered == 'true'
-  #   name: build and deploy
-  #   steps:
-  #   - name: download chart
-  #     uses: actions/download-artifact@v2
-  #     with:
-  #       name: needs.build_job.outputs.chart
-  #   - name: deploy
-  #     uses: 'deliverybot/helm@v1'
-  #     with:
-  #       release: 'hkube' 
-  #       namespace: default
+  deploy:
+    runs-on: ubuntu-latest
+    needs:
+      - build_job
+    name: build and deploy
+    steps:
+    - name: download chart
+      uses: actions/download-artifact@v2
+      with:
+        name: ${{ needs.build_job.outputs.chart }}
+    - name: deploy
+      uses: 'deliverybot/helm@v1'
+      with:
+        chart: ${{ needs.build_job.outputs.chart }}
+        release: 'hkube' 
+        namespace: default
+        helm: helm3
+        token: "${{ secrets.GITHUB_TOKEN }}"
+      env:
+        KUBECONFIG_FILE: '${{ secrets.KUBECONFIG }}'
