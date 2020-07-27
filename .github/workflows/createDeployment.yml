@@ -42,21 +42,21 @@ jobs:
         auto_merge: false
       env:
         GITHUB_TOKEN: "${{ secrets.GH_TOKEN }}"
-    - name: set deployment status to in progress
-      id: start_deployment
-      uses: octokit/request-action@v2.x
-      with:
-        route: POST /repos/:repository/deployments/:deployment/statuses
-        repository: ${{ github.repository }}
-        deployment: ${{ fromJson(steps.create_deployment.outputs.data).id }}
-        environment: dev
-        environment_url: https://example.com
-        log_url: https://github.com/${{ github.repository }}/actions/runs/${{ github.run_id }}
-        state: in_progress
-        mediaType: '{"previews": ["flash", "ant-man"]}'
-      env:
-        GITHUB_TOKEN: "${{ secrets.GH_TOKEN }}"
-    outputs:
-      branchName: ${{ fromJson(steps.get_pull_request_ref.outputs.data).head.ref }}
+    # - name: set deployment status to in progress
+    #   id: start_deployment
+    #   uses: octokit/request-action@v2.x
+    #   with:
+    #     route: POST /repos/:repository/deployments/:deployment/statuses
+    #     repository: ${{ github.repository }}
+    #     deployment: ${{ fromJson(steps.create_deployment.outputs.data).id }}
+    #     environment: dev
+    #     environment_url: https://example.com
+    #     log_url: https://github.com/${{ github.repository }}/actions/runs/${{ github.run_id }}
+    #     state: in_progress
+    #     mediaType: '{"previews": ["flash", "ant-man"]}'
+    #   env:
+    #     GITHUB_TOKEN: "${{ secrets.GH_TOKEN }}"
+    # outputs:
+    #   branchName: ${{ fromJson(steps.get_pull_request_ref.outputs.data).head.ref }}
   
 
