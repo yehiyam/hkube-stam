@@ -73,10 +73,10 @@ jobs:
         $HOME/helm3 package . --app-version=${{ steps.changed.outputs.version}} --version=${{ steps.changed.outputs.version}} -d /tmp/
     - uses: actions/upload-artifact@v2
       with:
-        name: hkube-${{ steps.changed.outputs.version}}.tgz
+        name: chart.tgz
         path: /tmp/hkube-${{ steps.changed.outputs.version}}.tgz
     outputs:
-      chart: hkube-${{ steps.changed.outputs.version}}.tgz
+      chart: chart.tgz
   deploy:
     runs-on: ubuntu-latest
     needs:
