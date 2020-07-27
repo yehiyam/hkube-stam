@@ -90,7 +90,7 @@ jobs:
     - name: deploy
       uses: 'deliverybot/helm@v1'
       with:
-        chart: ${{ needs.build_job.outputs.chart }}
+        chart: "./${{ needs.build_job.outputs.chart }}"
         release: 'hkube' 
         namespace: default
         helm: helm3
