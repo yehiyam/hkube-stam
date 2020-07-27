@@ -93,11 +93,14 @@ jobs:
         cd $HOME/helm/hkube
         git config --local user.email "action@github.com"
         git config --local user.name "GitHub Action"
-        git status
-        git remote -v
-        git add values.yaml
-        git commit -m "update version [skip ci]"
-        git push 
+        set +e
+        changed = $(git diff --exit-code --quiet)
+        if [ $changed == 1 ]; then
+          set -e
+          git add values.yaml
+          git commit -m "update version [skip ci]"
+          git push
+        fi
     - name: get-helm
       run: |
         curl -LO https://get.helm.sh/helm-v3.2.4-linux-amd64.tar.gz
