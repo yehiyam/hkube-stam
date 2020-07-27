@@ -55,7 +55,7 @@ jobs:
         state: in_progress
         mediaType: '{"previews": ["flash", "ant-man"]}'
       env:
-        GITHUB_TOKEN: "${{ secrets.GITHUB_TOKEN }}"
+        GITHUB_TOKEN: "${{ secrets.GH_TOKEN }}"
     outputs:
       branchName: ${{ fromJson(steps.get_pull_request_ref.outputs.data).head.ref }}
   
