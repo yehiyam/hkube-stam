@@ -1,38 +1,82 @@
-name: Deployer
-
+name: Deploy
 on:
-  pull_request:
-    branches:
-      - master
-  workflow_dispatch:
-    inputs:
-      prNumber:
-        description: 'The PR number to build'
-        required: true
-
-
+  deployment
 jobs:
-  deploy_job:
+  build_job:
     runs-on: ubuntu-latest
-    name: build and deploy
+    name: build dockers
+    # if: ${{ github.payload.deployment.environment == 'dev' }}
     steps:
     - name: Checkout
       uses: actions/checkout@v2
-    - name: Checkout Helm
-      uses: actions/checkout@v2
-      with:
-        repository: kube-HPC/helm
-        path: helm
-        ref: ${{ github.head_ref || github.ref }}
-    - name: Docker login
-      run: echo ${{ secrets.DOCKER_PASSWORD }} | docker login -u ${{ secrets.DOCKER_USER }} --password-stdin
-    - name: changed
-      id: changed
-      uses: yehiyam/deploy-to-k8s@master
-      with:
-        repo-token: "${{ secrets.GITHUB_TOKEN }}"
-    - uses: actions/upload-artifact@v2
-      with:
-        name: values.yaml
-        path: helm/hkube/values.yaml
-   
+    - name: stam
+      env:
+          GITHUB_CONTEXT: ${{ toJson(github) }}
+      run: echo "$GITHUB_CONTEXT"
+        
+    # - name: Checkout helm
+    #   run: |
+    #     git config --local user.email "action@github.com"
+    #     git config --local user.name "GitHub Action"
+    #     git clone "https://${{ secrets.GH_TOKEN }}@github.com/yehiyam/helm.git" "$HOME/helm"
+    #     cd $HOME/helm
+    #     git checkout ${{ needs.deployment.outputs.branchName }}
+    #     git status
+    # - name: Docker login
+      # run: echo ${{ secrets.DOCKER_PASSWORD }} | docker login -u ${{ secrets.DOCKER_USER }} --password-stdin
+  #   - name: changed
+  #     id: changed
+  #     uses: yehiyam/deploy-to-k8s@master
+  #     with:
+  #       repo-token: "${{ secrets.GITHUB_TOKEN }}"
+  #       prNumber: ${{ github.event.issue.number }}
+  #       branchName: ${{ github.payload.deployment.ref }}
+  #   - uses: actions/upload-artifact@v2
+  #     with:
+  #       name: values.yaml
+  #       path: $HOME/helm/hkube/values.yaml
+  #   - name: update helm repo
+  #     run: |
+  #       cd $HOME/helm/hkube
+  #       git config --local user.email "action@github.com"
+  #       git config --local user.name "GitHub Action"
+  #       set +e
+  #       changed = $(git diff --exit-code --quiet)
+  #       if [ $changed == 1 ]; then
+  #         set -e
+  #         git add values.yaml
+  #         git commit -m "update version [skip ci]"
+  #         git push
+  #       fi
+  #   - name: get-helm
+  #     run: |
+  #       curl -LO https://get.helm.sh/helm-v3.2.4-linux-amd64.tar.gz
+  #       tar -zxvf helm-v3.2.4-linux-amd64.tar.gz
+  #       mv linux-amd64/helm $HOME/helm3
+  #   - name: package
+  #     run: |
+  #       cd $HOME/helm/hkube
+  #       $HOME/helm3 package . --app-version=${{ steps.changed.outputs.version}} --version=${{ steps.changed.outputs.version}} -d /tmp/
+  #   - uses: actions/upload-artifact@v2
+  #     with:
+  #       name: hkube-${{ steps.changed.outputs.version}}.tgz
+  #       path: /tmp/hkube-${{ steps.changed.outputs.version}}.tgz
+  #   outputs:
+  #     chart: hkube-${{ steps.changed.outputs.version}}.tgz
+  # deploy:
+  #   runs-on: ubuntu-latest
+  #   needs:
+  #     - deploy-check
+  #     - build_job
+  #   if: needs.deploy-check.outputs.triggered == 'true'
+  #   name: build and deploy
+  #   steps:
+  #   - name: download chart
+  #     uses: actions/download-artifact@v2
+  #     with:
+  #       name: needs.build_job.outputs.chart
+  #   - name: deploy
+  #     uses: 'deliverybot/helm@v1'
+  #     with:
+  #       release: 'hkube' 
+  #       namespace: default
