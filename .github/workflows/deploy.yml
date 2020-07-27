@@ -43,7 +43,7 @@ jobs:
       uses: yehiyam/deploy-to-k8s@master
       with:
         repo-token: "${{ secrets.GITHUB_TOKEN }}"
-        prNumber: ${{ github.event.deployment.id }}
+        prNumber: ${{ github.event.deployment.payload.prNumber }}
         branchName: ${{ github.event.ref }}
     - uses: actions/upload-artifact@v2
       with:
