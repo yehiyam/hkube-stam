@@ -88,6 +88,11 @@ jobs:
       uses: actions/download-artifact@v2
       with:
         name: ${{ needs.build_job.outputs.chart }}
+    - name: set values
+      run: 'echo "$DEV1_VALUES" > ${{ github.workspace }}/values.yaml'
+      shell: bash
+      env:
+        DEV1_VALUES: ${{secrets.DEV1_VALUES}}
     - name: deploy
       uses: 'deliverybot/helm@v1'
       with:
@@ -95,6 +100,7 @@ jobs:
         release: 'hkube' 
         namespace: default
         helm: helm3
+        value_files: "${{ github.workspace }}/values.yaml"
         token: "${{ secrets.GITHUB_TOKEN }}"
       env:
         KUBECONFIG_FILE: '${{ secrets.KUBECONFIG }}'
