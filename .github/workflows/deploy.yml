@@ -38,8 +38,8 @@ jobs:
         git status
     - name: Docker login
       run: echo ${{ secrets.DOCKER_PASSWORD }} | docker login -u ${{ secrets.DOCKER_USER }} --password-stdin
-    - name: changed
-      id: changed
+    - name: build changed
+      id: build_changed
       uses: yehiyam/deploy-to-k8s@master
       with:
         repo-token: "${{ secrets.GITHUB_TOKEN }}"
@@ -70,8 +70,8 @@ jobs:
     - name: package
       run: |
         cd $HOME/helm/hkube
-        $HOME/helm3 package . --app-version=${{ steps.changed.outputs.version}} --version=${{ steps.changed.outputs.version}} -d /tmp/
-        mv /tmp/hkube-${{ steps.changed.outputs.version}}.tgz /tmp/chart.tgz
+        $HOME/helm3 package . --app-version=${{ steps.build_changed.outputs.version}} --version=${{ steps.build_changed.outputs.version}} -d /tmp/
+        mv /tmp/hkube-${{ steps.build_changed.outputs.version}}.tgz /tmp/chart.tgz
     - uses: actions/upload-artifact@v2
       with:
         name: chart.tgz
