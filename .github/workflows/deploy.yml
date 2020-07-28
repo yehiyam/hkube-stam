@@ -26,7 +26,9 @@ jobs:
     - name: stam
       env:
           GITHUB_CONTEXT: ${{ toJson(github) }}
-      run: echo "$GITHUB_CONTEXT"
+      run: |
+        echo "$GITHUB_CONTEXT"
+        env
         
     - name: Checkout helm
       run: |
