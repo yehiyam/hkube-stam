@@ -112,7 +112,7 @@ jobs:
       with:
         route: POST /repos/:repository/deployments/:deployment/statuses
         repository: ${{ github.repository }}
-        deployment: ${{ fromJson(steps.create_deployment.outputs.data).id }}
+        deployment: ${{ github.event.deployment.id }}
         environment: dev
         environment_url: https://${{ secrets.DEV1_URL }}/hkube/dashboard/
         log_url: https://github.com/${{ github.repository }}/actions/runs/${{ github.run_id }}
@@ -128,7 +128,7 @@ jobs:
       with:
         route: POST /repos/:repository/deployments/:deployment/statuses
         repository: ${{ github.repository }}
-        deployment: ${{ fromJson(steps.create_deployment.outputs.data).id }}
+        deployment: ${{ github.event.deployment.id }}
         environment: dev
         environment_url: https://${{ secrets.DEV1_URL }}/hkube/dashboard/
         log_url: https://github.com/${{ github.repository }}/actions/runs/${{ github.run_id }}
