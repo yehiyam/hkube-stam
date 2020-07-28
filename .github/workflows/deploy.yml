@@ -5,7 +5,7 @@ jobs:
   build_job:
     runs-on: ubuntu-latest
     name: build dockers
-    # if: ${{ github.payload.deployment.environment == 'dev' }}
+    if: ${{ github.event.deployment.environment == 'dev' }}
     steps:
     - name: set deployment status to in progress
       id: start_deployment
@@ -15,7 +15,7 @@ jobs:
         repository: ${{ github.repository }}
         deployment: ${{ github.event.deployment.id }}
         environment: dev
-        environment_url: https://example.com
+        environment_url: https://${{ secrets.DEV1_URL }}/hkube/dashboard/
         log_url: https://github.com/${{ github.repository }}/actions/runs/${{ github.run_id }}
         state: in_progress
         mediaType: '{"previews": ["flash", "ant-man"]}'
@@ -26,7 +26,9 @@ jobs:
     - name: stam
       env:
           GITHUB_CONTEXT: ${{ toJson(github) }}
-      run: echo "$GITHUB_CONTEXT"
+      run: |
+        echo "$GITHUB_CONTEXT"
+        env
         
     - name: Checkout helm
       run: |
@@ -34,12 +36,15 @@ jobs:
         git config --local user.name "GitHub Action"
         git clone "https://${{ secrets.GH_TOKEN }}@github.com/yehiyam/helm.git" "$HOME/helm"
         cd $HOME/helm
-        git checkout ${{ github.event.ref }}
+        git checkout ${{ github.event.deployment.ref }}
         git status
+    - uses: actions/setup-node@v2-beta
+      with:
+        node-version: '14'
     - name: Docker login
       run: echo ${{ secrets.DOCKER_PASSWORD }} | docker login -u ${{ secrets.DOCKER_USER }} --password-stdin
-    - name: changed
-      id: changed
+    - name: build changed
+      id: build_changed
       uses: yehiyam/deploy-to-k8s@master
       with:
         repo-token: "${{ secrets.GITHUB_TOKEN }}"
@@ -55,8 +60,8 @@ jobs:
         git config --local user.email "action@github.com"
         git config --local user.name "GitHub Action"
         set +e
-        changed = $(git diff --exit-code --quiet)
-        if [ $changed == 1 ]; then
+        git diff --exit-code --quiet
+        if [ "$?" == 1 ]; then
           set -e
           git add values.yaml
           git commit -m "update version [skip ci]"
@@ -70,27 +75,69 @@ jobs:
     - name: package
       run: |
         cd $HOME/helm/hkube
-        $HOME/helm3 package . --app-version=${{ steps.changed.outputs.version}} --version=${{ steps.changed.outputs.version}} -d /tmp/
+        $HOME/helm3 package . --app-version=${{ steps.build_changed.outputs.version}} --version=${{ steps.build_changed.outputs.version}} -d /tmp/
+        mv /tmp/hkube-${{ steps.build_changed.outputs.version}}.tgz /tmp/chart.tgz
     - uses: actions/upload-artifact@v2
       with:
-        name: hkube-${{ steps.changed.outputs.version}}.tgz
-        path: /tmp/hkube-${{ steps.changed.outputs.version}}.tgz
+        name: chart.tgz
+        path: /tmp/chart.tgz
     outputs:
-      chart: hkube-${{ steps.changed.outputs.version}}.tgz
-  # deploy:
-  #   runs-on: ubuntu-latest
-  #   needs:
-  #     - deploy-check
-  #     - build_job
-  #   if: needs.deploy-check.outputs.triggered == 'true'
-  #   name: build and deploy
-  #   steps:
-  #   - name: download chart
-  #     uses: actions/download-artifact@v2
-  #     with:
-  #       name: needs.build_job.outputs.chart
-  #   - name: deploy
-  #     uses: 'deliverybot/helm@v1'
-  #     with:
-  #       release: 'hkube' 
-  #       namespace: default
+      chart: chart.tgz
+  deploy:
+    runs-on: ubuntu-latest
+    needs:
+      - build_job
+    name: build and deploy
+    steps:
+    - name: download chart
+      uses: actions/download-artifact@v2
+      with:
+        name: ${{ needs.build_job.outputs.chart }}
+    - name: set values
+      run: |
+        echo "$DEV1_VALUES" > ${{ github.workspace }}/dev1.yaml
+        cat ${{ github.workspace }}/dev1.yaml
+      shell: bash
+      env:
+        DEV1_VALUES: ${{secrets.DEV1_VALUES}}
+    - name: deploy
+      uses: 'deliverybot/helm@v1'
+      with:
+        chart: "${{ github.workspace }}/${{ needs.build_job.outputs.chart }}"
+        release: 'hkube' 
+        namespace: default
+        helm: helm3
+        value-files: "${{ github.workspace }}/dev1.yaml"
+        token: "${{ secrets.GITHUB_TOKEN }}"
+      env:
+        KUBECONFIG_FILE: '${{ secrets.KUBECONFIG }}'
+    - name: set deployment status to success
+      id: successful_deployment
+      uses: octokit/request-action@v2.x
+      with:
+        route: POST /repos/:repository/deployments/:deployment/statuses
+        repository: ${{ github.repository }}
+        deployment: ${{ github.event.deployment.id }}
+        environment: dev
+        environment_url: https://${{ secrets.DEV1_URL }}/hkube/dashboard/
+        log_url: https://github.com/${{ github.repository }}/actions/runs/${{ github.run_id }}
+        mediaType: '{"previews": ["ant-man"]}'
+        state: success
+      env:
+        GITHUB_TOKEN: "${{ secrets.GITHUB_TOKEN }}"
+
+    - name: set deployment status to failure
+      id: failed_deployment
+      uses: octokit/request-action@v2.x
+      if: failure()
+      with:
+        route: POST /repos/:repository/deployments/:deployment/statuses
+        repository: ${{ github.repository }}
+        deployment: ${{ github.event.deployment.id }}
+        environment: dev
+        environment_url: https://${{ secrets.DEV1_URL }}/hkube/dashboard/
+        log_url: https://github.com/${{ github.repository }}/actions/runs/${{ github.run_id }}
+        mediaType: '{"previews": ["ant-man"]}'
+        state: failure
+      env:
+        GITHUB_TOKEN: "${{ secrets.GITHUB_TOKEN }}"

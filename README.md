@@ -1,12 +1,12 @@
 # ![HKube](https://user-images.githubusercontent.com/27515937/59049270-4cffa000-8890-11e9-8281-4aa97b1ecca3.png) <!-- omit in toc -->
-
+ 
 > HKube is a cloud-native open source framework to run **[distributed](https://en.wikipedia.org/wiki/Distributed_computing) pipeline of algorithms** built on [Kubernetes](https://kubernetes.io/).
 >
 > HKube optimally **utilizing** pipeline's resources, based on **user priorities** and **[heuristics](https://en.wikipedia.org/wiki/Heuristic)**.
 
 ## Features <!-- omit in toc -->
 
-- **Distributed pipeline of algorithms**
+- **Distributed pipeline of algorithms** 
 
   - Receives [DAG graph](https://en.wikipedia.org/wiki/Directed_acyclic_graph) as input and automatically parallelizes your algorithms over the cluster.
   - Manages the complications of distributed processing, keep your code simple (even single threaded).

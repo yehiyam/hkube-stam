@@ -6,5 +6,8 @@ versions="python:2.7 python:3.5 python:3.6 python:3.7"
 for v in $versions
 do
   echo downloading for $v
+  echo docker run --rm -u $(id -u ${USER}):$(id -g ${USER}) -v $SCRIPTPATH/../environments/python/packages:/packages -v $SCRIPTPATH/../environments/python/wrapper:/wrapper $v pip wheel -w /packages -r /wrapper/requirements.txt
+  echo $SCRIPTPATH/../environments/python/wrapper
+  ls $SCRIPTPATH/../environments/python/wrapper
   docker run --rm -u $(id -u ${USER}):$(id -g ${USER}) -v $SCRIPTPATH/../environments/python/packages:/packages -v $SCRIPTPATH/../environments/python/wrapper:/wrapper $v pip wheel -w /packages -r /wrapper/requirements.txt
 done
