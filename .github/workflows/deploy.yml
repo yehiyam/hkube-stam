@@ -34,9 +34,8 @@ jobs:
       run: |
         git config --local user.email "action@github.com"
         git config --local user.name "GitHub Action"
-        mkdir -p $RUNNER_TEMP/_github_home/
-        git clone "https://${{ secrets.GH_TOKEN }}@github.com/yehiyam/helm.git" "$RUNNER_TEMP/_github_home/helm"
-        cd $RUNNER_TEMP/_github_home/helm
+        git clone "https://${{ secrets.GH_TOKEN }}@github.com/yehiyam/helm.git" "$HOME/helm"
+        cd $HOME/helm
         git checkout ${{ github.event.deployment.ref }}
         git status
     - uses: actions/setup-node@v2-beta
